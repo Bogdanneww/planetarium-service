@@ -1,11 +1,15 @@
-from django.urls import path
+from rest_framework import routers
+from django.urls import path, include
 
-from planetarium.views import PlanetariumDomeList, PlanetariumDomeDetail
+from planetarium.views import PlanetariumDomeViewSet
 
 
 app_name = "planetarium"
 
+router = routers.DefaultRouter()
+
+router.register("planetarium-domes", PlanetariumDomeViewSet)
+
 urlpatterns = [
-    path("planetarium-domes/", PlanetariumDomeList.as_view(), name="planetarium_dome_list"),
-    path("planetarium-domes/<int:pk>/", PlanetariumDomeDetail.as_view(), name="planetarium_dome_detail"),
+    path("", include(router.urls)),
 ]
