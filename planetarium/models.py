@@ -22,7 +22,7 @@ class Reservation(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Reservation: {self.created_at}"
+        return f"Reservation: {self.created_at} User: {self.user}"
 
 
 class AstronomyShow(models.Model):
