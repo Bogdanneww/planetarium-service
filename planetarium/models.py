@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.constraints import UniqueConstraint
 
 from app import settings
 
@@ -9,6 +8,10 @@ class PlanetariumDome(models.Model):
     name = models.CharField(max_length=100)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
+
+    @property
+    def total_seats(self) -> int:
+        return self.rows * self.seats_in_row
 
     def __str__(self) -> str:
         return f"Planetarium: {self.name} (id: {self.id}) (row: {self.rows} seat: {self.seats_in_row})"
@@ -52,11 +55,12 @@ class ShowSession(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    show_session = models.ForeignKey(ShowSession, on_delete=models.CASCADE)
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    show_session = models.ForeignKey(ShowSession, on_delete=models.CASCADE, related_name="tickets")
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, related_name="tickets")
 
     class Meta:
-        constraints = [UniqueConstraint(fields=["row", "seat", "show_session"], name="unique_ticket")]
+        unique_together = ("row", "seat", "show_session")
+        ordering = ["row", "seat", "show_session"]
 
     def __str__(self) -> str:
         return f"Ticket: Row {self.row}, Seat {self.seat}, Session {self.show_session.show_time}"
@@ -76,7 +80,7 @@ class Ticket(models.Model):
 
 
 class ShowTheme(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self) -> str:
         return f"ShowTheme: {self.name}"
