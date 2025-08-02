@@ -106,3 +106,11 @@ class ShowSessionRetrieveSerializer(ShowSessionSerializer):
     class Meta:
         model = ShowSession
         fields = ("id", "astronomy_show", "planetarium_dome", "show_time", "ticket_set", "tickets_available")
+
+
+class TicketListSerializer(TicketSerializer):
+    show_session = ShowSessionListSerializer(read_only=True)
+
+
+class ReservationListSerializer(ReservationSerializer):
+    tickets = TicketListSerializer(read_only=True, many=True)
