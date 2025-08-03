@@ -14,6 +14,9 @@ from pathlib import Path
 
 import os
 from dotenv import load_dotenv
+from rest_framework import permissions
+
+from planetarium.permissions import IsAdminAllOrIsAuthenticate
 
 load_dotenv()
 
@@ -138,5 +141,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10
+    "PAGE_SIZE": 10,
+    "DEFAULT_PERMISSION_CLASSES": ["planetarium.permissions.IsAdminAllOrIsAuthenticate",],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication",],
 }

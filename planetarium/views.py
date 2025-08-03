@@ -1,18 +1,46 @@
 from django.db.models import Count, F
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from planetarium.models import PlanetariumDome, ShowSession, Reservation, AstronomyShow, Ticket, ShowTheme
 from planetarium.permissions import IsAdminAllOrIsAuthenticate
 from planetarium.serializers import PlanetariumDomeSerializer, ShowSessionSerializer, ShowSessionListSerializer, \
     ReservationSerializer, AstronomyShowSerializer, AstronomyShowListSerializer, TicketSerializer, ShowThemeSerializer, \
-    AstronomyShowRetrieveSerializer, ShowSessionRetrieveSerializer, ReservationListSerializer
+    AstronomyShowRetrieveSerializer, ShowSessionRetrieveSerializer, ReservationListSerializer, \
+    PlanetariumDomeImageSerializer
 
 
 class PlanetariumDomeViewSet(viewsets.ModelViewSet):
     queryset = PlanetariumDome.objects.all()
     serializer_class = PlanetariumDomeSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return PlanetariumDomeSerializer
+        elif self.action == "retrieve":
+            return PlanetariumDomeSerializer
+        elif self.action == "upload_image":
+            return PlanetariumDomeImageSerializer
+        return PlanetariumDomeSerializer
+
+    @action(
+        methods=["post"],
+        detail=True,
+        url_path="upload-image",
+    )
+    def upload_image(self, request):
+        planetarium_dome = self.get_object()
+        serializer = self.get_serializer(
+            planetarium_dome,
+            data=request.data,
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReservationViewSet(viewsets.ModelViewSet):

@@ -29,6 +29,13 @@ class PlanetariumDomeSerializer(serializers.ModelSerializer):
         return obj.rows * obj.seats_in_row
 
 
+class PlanetariumDomeImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PlanetariumDome
+        fields = ("id", "image")
+
+
 class AstronomyShowSerializer(serializers.ModelSerializer):
 
     class Meta:
