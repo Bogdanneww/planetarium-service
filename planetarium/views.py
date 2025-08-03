@@ -1,7 +1,10 @@
 from django.db.models import Count, F
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from planetarium.models import PlanetariumDome, ShowSession, Reservation, AstronomyShow, Ticket, ShowTheme
+from planetarium.permissions import IsAdminAllOrIsAuthenticate
 from planetarium.serializers import PlanetariumDomeSerializer, ShowSessionSerializer, ShowSessionListSerializer, \
     ReservationSerializer, AstronomyShowSerializer, AstronomyShowListSerializer, TicketSerializer, ShowThemeSerializer, \
     AstronomyShowRetrieveSerializer, ShowSessionRetrieveSerializer, ReservationListSerializer
@@ -63,6 +66,8 @@ class TicketViewSet(viewsets.ModelViewSet):
 class ShowThemeViewSet(viewsets.ModelViewSet):
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminAllOrIsAuthenticate,)
 
 
 class ShowSessionViewSet(viewsets.ModelViewSet):
