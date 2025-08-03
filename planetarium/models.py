@@ -1,13 +1,23 @@
+import pathlib
+import uuid
+
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 from app import settings
+
+
+def planetarium_dome_image_path(instance: "PlanetariumDome", filename: str) -> pathlib.Path:
+    filename = f"{slugify(instance.name)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
+    return pathlib.Path("upload/planetarium_dome") / pathlib.Path(filename)
 
 
 class PlanetariumDome(models.Model):
     name = models.CharField(max_length=100)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
+    image = models.ImageField(upload_to=planetarium_dome_image_path, null=True, blank=True)
 
     @property
     def total_seats(self) -> int:

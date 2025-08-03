@@ -13,16 +13,20 @@ class ShowThemeSerializer(serializers.ModelSerializer):
 
 class PlanetariumDomeSerializer(serializers.ModelSerializer):
     show_themes = serializers.SerializerMethodField()
+    total_seats = serializers.SerializerMethodField()
 
     class Meta:
         model = PlanetariumDome
-        fields = ["id", "name", "rows", "seats_in_row", "total_seats", "show_themes"]
+        fields = ["id", "name", "rows", "seats_in_row", "total_seats", "show_themes", "image"]
 
     def get_show_themes(self, dome: PlanetariumDome) -> list[str]:
         themes = ShowTheme.objects.filter(
             shows__showsession__planetarium_dome=dome
         ).distinct()
         return [theme.name for theme in themes]
+
+    def get_total_seats(self, obj):
+        return obj.rows * obj.seats_in_row
 
 
 class AstronomyShowSerializer(serializers.ModelSerializer):
