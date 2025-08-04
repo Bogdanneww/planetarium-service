@@ -1,4 +1,6 @@
 from django.db.models import Count, F
+from drf_spectacular.utils import OpenApiParameter
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -10,6 +12,27 @@ from planetarium.serializers import PlanetariumDomeSerializer, ShowSessionSerial
     ReservationSerializer, AstronomyShowSerializer, AstronomyShowListSerializer, TicketSerializer, ShowThemeSerializer, \
     AstronomyShowRetrieveSerializer, ShowSessionRetrieveSerializer, ReservationListSerializer, \
     PlanetariumDomeImageSerializer
+
+
+@extend_schema_view(
+    create=extend_schema(
+        request=PlanetariumDomeSerializer,
+        responses=PlanetariumDomeSerializer,
+        description="Create a new planetarium dome."
+    ),
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "themes",
+                type={"type": "array", "items": {"type": "number"}},
+                description="Show themes",
+                location=OpenApiParameter.QUERY,
+                style="form",
+                explode=True,
+            )
+        ]
+    )
+)
 
 
 class PlanetariumDomeViewSet(viewsets.ModelViewSet):
@@ -43,6 +66,13 @@ class PlanetariumDomeViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=ReservationSerializer,
+        responses=ReservationSerializer,
+        description="Create a new reservation with tickets"
+    )
+)
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
@@ -66,6 +96,13 @@ class ReservationViewSet(viewsets.ModelViewSet):
         return serializer
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=AstronomyShowSerializer,
+        responses=AstronomyShowSerializer,
+        description="Create a new Astronomy Show"
+    )
+)
 class AstronomyShowViewSet(viewsets.ModelViewSet):
     queryset = AstronomyShow.objects.all()
     serializer_class = AstronomyShowSerializer
@@ -86,11 +123,25 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=TicketSerializer,
+        responses=TicketSerializer,
+        description="Create a new ticket"
+    )
+)
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=ShowThemeSerializer,
+        responses=ShowThemeSerializer,
+        description="Create a new show theme"
+    )
+)
 class ShowThemeViewSet(viewsets.ModelViewSet):
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
@@ -98,6 +149,13 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminAllOrIsAuthenticate,)
 
 
+@extend_schema_view(
+    create=extend_schema(
+        request=ShowSessionSerializer,
+        responses=ShowSessionSerializer,
+        description="Create a new show session"
+    )
+)
 class ShowSessionViewSet(viewsets.ModelViewSet):
     queryset = ShowSession.objects.all().select_related()
 
