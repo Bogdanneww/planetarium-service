@@ -8,8 +8,12 @@ from django.utils.text import slugify
 from app import settings
 
 
-def planetarium_dome_image_path(instance: "PlanetariumDome", filename: str) -> pathlib.Path:
-    filename = f"{slugify(instance.name)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
+def planetarium_dome_image_path(
+    instance: "PlanetariumDome", filename: str
+) -> pathlib.Path:
+    filename = (
+        f"{slugify(instance.name)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
+    )
     return pathlib.Path("upload/planetarium_dome") / pathlib.Path(filename)
 
 
@@ -17,7 +21,9 @@ class PlanetariumDome(models.Model):
     name = models.CharField(max_length=100)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
-    image = models.ImageField(upload_to=planetarium_dome_image_path, null=True, blank=True)
+    image = models.ImageField(
+        upload_to=planetarium_dome_image_path, null=True, blank=True
+    )
 
     @property
     def total_seats(self) -> int:
@@ -55,7 +61,9 @@ class ShowSession(models.Model):
     class Meta:
         indexes = [models.Index(fields=["show_time"])]
         constraints = [
-            models.UniqueConstraint(fields=["planetarium_dome", "show_time"], name="unique_dome_session")
+            models.UniqueConstraint(
+                fields=["planetarium_dome", "show_time"], name="unique_dome_session"
+            )
         ]
 
     def __str__(self) -> str:
@@ -65,8 +73,12 @@ class ShowSession(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    show_session = models.ForeignKey(ShowSession, on_delete=models.CASCADE, related_name="tickets")
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, related_name="tickets")
+    show_session = models.ForeignKey(
+        ShowSession, on_delete=models.CASCADE, related_name="tickets"
+    )
+    reservation = models.ForeignKey(
+        Reservation, on_delete=models.CASCADE, related_name="tickets"
+    )
 
     class Meta:
         unique_together = ("row", "seat", "show_session")
@@ -79,14 +91,22 @@ class Ticket(models.Model):
         dome = self.show_session.planetarium_dome
 
         if not (1 <= self.row <= dome.rows):
-            raise ValidationError(f"Invalid row number {self.row}. Max rows: {dome.rows}.")
+            raise ValidationError(
+                f"Invalid row number {self.row}. Max rows: {dome.rows}."
+            )
 
         if not (1 <= self.seat <= dome.seats_in_row):
-            raise ValidationError(f"Invalid seat number {self.seat}. Max seats per row: {dome.seats_in_row}.")
+            raise ValidationError(
+                f"Invalid seat number {self.seat}. Max seats per row: {dome.seats_in_row}."
+            )
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         self.full_clean()
-        return super(Ticket, self).save(force_insert, force_update, using, update_fields)
+        return super(Ticket, self).save(
+            force_insert, force_update, using, update_fields
+        )
 
 
 class ShowTheme(models.Model):

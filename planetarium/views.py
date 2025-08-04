@@ -6,19 +6,36 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from planetarium.models import PlanetariumDome, ShowSession, Reservation, AstronomyShow, Ticket, ShowTheme
+from planetarium.models import (
+    PlanetariumDome,
+    ShowSession,
+    Reservation,
+    AstronomyShow,
+    Ticket,
+    ShowTheme,
+)
 from planetarium.permissions import IsAdminAllOrIsAuthenticate
-from planetarium.serializers import PlanetariumDomeSerializer, ShowSessionSerializer, ShowSessionListSerializer, \
-    ReservationSerializer, AstronomyShowSerializer, AstronomyShowListSerializer, TicketSerializer, ShowThemeSerializer, \
-    AstronomyShowRetrieveSerializer, ShowSessionRetrieveSerializer, ReservationListSerializer, \
-    PlanetariumDomeImageSerializer
+from planetarium.serializers import (
+    PlanetariumDomeSerializer,
+    ShowSessionSerializer,
+    ShowSessionListSerializer,
+    ReservationSerializer,
+    AstronomyShowSerializer,
+    AstronomyShowListSerializer,
+    TicketSerializer,
+    ShowThemeSerializer,
+    AstronomyShowRetrieveSerializer,
+    ShowSessionRetrieveSerializer,
+    ReservationListSerializer,
+    PlanetariumDomeImageSerializer,
+)
 
 
 @extend_schema_view(
     create=extend_schema(
         request=PlanetariumDomeSerializer,
         responses=PlanetariumDomeSerializer,
-        description="Create a new planetarium dome."
+        description="Create a new planetarium dome.",
     ),
     list=extend_schema(
         parameters=[
@@ -31,10 +48,8 @@ from planetarium.serializers import PlanetariumDomeSerializer, ShowSessionSerial
                 explode=True,
             )
         ]
-    )
+    ),
 )
-
-
 class PlanetariumDomeViewSet(viewsets.ModelViewSet):
     queryset = PlanetariumDome.objects.all()
     serializer_class = PlanetariumDomeSerializer
@@ -70,7 +85,7 @@ class PlanetariumDomeViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         request=ReservationSerializer,
         responses=ReservationSerializer,
-        description="Create a new reservation with tickets"
+        description="Create a new reservation with tickets",
     )
 )
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -81,7 +96,9 @@ class ReservationViewSet(viewsets.ModelViewSet):
         queryset = self.queryset.filter(user=self.request.user)
 
         if self.action == "list":
-            queryset = queryset.prefetch_related("tickets__show_session__planetarium_dome")
+            queryset = queryset.prefetch_related(
+                "tickets__show_session__planetarium_dome"
+            )
         return queryset
 
     def perform_create(self, serializer):
@@ -100,7 +117,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         request=AstronomyShowSerializer,
         responses=AstronomyShowSerializer,
-        description="Create a new Astronomy Show"
+        description="Create a new Astronomy Show",
     )
 )
 class AstronomyShowViewSet(viewsets.ModelViewSet):
@@ -127,7 +144,7 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         request=TicketSerializer,
         responses=TicketSerializer,
-        description="Create a new ticket"
+        description="Create a new ticket",
     )
 )
 class TicketViewSet(viewsets.ModelViewSet):
@@ -139,7 +156,7 @@ class TicketViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         request=ShowThemeSerializer,
         responses=ShowThemeSerializer,
-        description="Create a new show theme"
+        description="Create a new show theme",
     )
 )
 class ShowThemeViewSet(viewsets.ModelViewSet):
@@ -153,7 +170,7 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         request=ShowSessionSerializer,
         responses=ShowSessionSerializer,
-        description="Create a new show session"
+        description="Create a new show session",
     )
 )
 class ShowSessionViewSet(viewsets.ModelViewSet):
@@ -170,10 +187,10 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         if self.action in "list":
-            queryset = (
-                queryset
-                .select_related("planetarium_dome")
-                .annotate(tickets_available=F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row") - Count("tickets"))
+            queryset = queryset.select_related("planetarium_dome").annotate(
+                tickets_available=F("planetarium_dome__rows")
+                * F("planetarium_dome__seats_in_row")
+                - Count("tickets")
             )
         elif self.action in "retrieve":
             queryset = queryset.select_related()

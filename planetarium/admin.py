@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import PlanetariumDome, Reservation, AstronomyShow, ShowSession, Ticket, ShowTheme
+from .models import (
+    PlanetariumDome,
+    Reservation,
+    AstronomyShow,
+    ShowSession,
+    Ticket,
+    ShowTheme,
+)
 
 
 class TicketInLine(admin.TabularInline):
