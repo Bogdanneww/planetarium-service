@@ -43,6 +43,24 @@ class PlanetariumDomeSerializer(serializers.ModelSerializer):
     def get_total_seats(self, obj):
         return obj.rows * obj.seats_in_row
 
+    def validate_name(self, value):
+        qs = PlanetariumDome.objects.filter(name=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("PlanetariumDome with this name already exists.")
+        return value
+
+    def validate_rows(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Rows must be greater than zero.")
+        return value
+
+    def validate_seats_in_row(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Seats in row must be greater than zero.")
+        return value
+
 
 class PlanetariumDomeImageSerializer(serializers.ModelSerializer):
 

@@ -2,7 +2,6 @@ from django.db.models import Count, F
 from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -14,7 +13,7 @@ from planetarium.models import (
     Ticket,
     ShowTheme,
 )
-from planetarium.permissions import IsAdminAllOrIsAuthenticate
+
 from planetarium.serializers import (
     PlanetariumDomeSerializer,
     ShowSessionSerializer,
@@ -162,8 +161,6 @@ class TicketViewSet(viewsets.ModelViewSet):
 class ShowThemeViewSet(viewsets.ModelViewSet):
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
-#    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminAllOrIsAuthenticate,)
 
 
 @extend_schema_view(
