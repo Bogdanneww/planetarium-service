@@ -14,7 +14,9 @@ app_name = "planetarium"
 
 router = routers.DefaultRouter()
 
-router.register("planetarium-domes", PlanetariumDomeViewSet, basename="planetarium-domes")
+router.register(
+    "planetarium-domes", PlanetariumDomeViewSet, basename="planetarium-domes"
+)
 router.register("show-sessions", ShowSessionViewSet, basename="show-sessions")
 router.register("reservations", ReservationViewSet, basename="reservations")
 router.register("astronomy-shows", AstronomyShowViewSet, basename="astronomy-shows")

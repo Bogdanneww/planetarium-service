@@ -48,7 +48,9 @@ class PlanetariumDomeSerializer(serializers.ModelSerializer):
         if self.instance:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
-            raise serializers.ValidationError("PlanetariumDome with this name already exists.")
+            raise serializers.ValidationError(
+                "PlanetariumDome with this name already exists."
+            )
         return value
 
     def validate_rows(self, value):

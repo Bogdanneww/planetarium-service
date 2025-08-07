@@ -13,11 +13,7 @@ def detail_url(planetarium_dome_id):
 
 
 def sample_planetarium_dome(**params) -> PlanetariumDome:
-    defaults = {
-        "name": "Testname",
-        "rows": "10",
-        "seats_in_row": "10"
-    }
+    defaults = {"name": "Testname", "rows": "10", "seats_in_row": "10"}
     defaults.update(params)
     return PlanetariumDome.objects.create(**defaults)
 
@@ -36,8 +32,7 @@ class AuthenticatedPlanetariumDomeTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            email="test@test.test",
-            password="testpassword"
+            email="test@test.test", password="testpassword"
         )
         self.client.force_authenticate(self.user)
         self.planetarium_dome_url = reverse("planetarium:planetarium-domes-list")

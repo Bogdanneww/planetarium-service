@@ -82,8 +82,7 @@ class AccountsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_refresh = self.client.post(
-            REFRESH_URL,
-            {"refresh": response.data["refresh"]}
+            REFRESH_URL, {"refresh": response.data["refresh"]}
         )
 
         self.assertEqual(response_refresh.status_code, status.HTTP_200_OK)
