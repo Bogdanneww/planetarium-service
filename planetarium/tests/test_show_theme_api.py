@@ -32,9 +32,7 @@ class AuthenticatedShowThemeTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            email="user@example.com",
-            password="testpass123",
-            is_staff=True
+            email="user@example.com", password="testpass123", is_staff=True
         )
         self.client.force_authenticate(self.user)
         self.url = reverse("planetarium:show-themes-list")

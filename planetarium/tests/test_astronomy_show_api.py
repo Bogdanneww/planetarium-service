@@ -22,8 +22,7 @@ def sample_astronomy_show(**params):
     }
     defaults.update(params)
     show = AstronomyShow.objects.create(
-        title=defaults["title"],
-        description=defaults["description"]
+        title=defaults["title"], description=defaults["description"]
     )
     if "themes" in params:
         show.themes.set(params["themes"])
@@ -48,9 +47,7 @@ class AuthenticatedAstronomyShowTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            email="test@test.com",
-            password="password123",
-            is_staff=True
+            email="test@test.com", password="password123", is_staff=True
         )
         self.client.force_authenticate(self.user)
         self.url = reverse("planetarium:astronomy-shows-list")

@@ -90,7 +90,8 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = "__all__"
+        fields = ("id", "row", "seat", "show_session", "reservation")
+        read_only_fields = ("reservation",)
 
     def validate(self, attrs):
         show_session = attrs.get("show_session")
@@ -135,7 +136,12 @@ class ShowSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShowSession
-        fields = "__all__"
+        fields = (
+            "id",
+            "astronomy_show",
+            "planetarium_dome",
+            "show_time",
+        )
 
 
 class ShowSessionListSerializer(serializers.ModelSerializer):
