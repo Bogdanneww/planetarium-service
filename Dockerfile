@@ -1,13 +1,17 @@
-FROM python:3.13
+FROM python:3.11.6-alpine3.18
 LABEL authors="Bohdan M. M."
 
-ENV PUTHOUNNBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
 COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN mkdir -p /files/media
+RUN adduser --disabled-password --no-create-home my_user
+RUN chown -R my_user /files/media && chmod -R 755 /files/media
+
+USER my_user
